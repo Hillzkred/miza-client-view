@@ -1,15 +1,20 @@
 import * as React from "react";
 import { DatabasePropertyConfigResponse } from "@/app/types/types";
 import App from "./App";
-import { Client } from "@notionhq/client";
-import { PartialDatabaseObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+// import { Client } from "@notionhq/client";
+import {
+  GetDatabaseResponse,
+  PartialDatabaseObjectResponse,
+  QueryDatabaseResponse,
+} from "@notionhq/client/build/src/api-endpoints";
 
 const { NEXT_PUBLIC_NOTION_ID, NEXT_PUBLIC_DATABASE_ID } = process.env;
 
-const notion = new Client({ auth: NEXT_PUBLIC_NOTION_ID as string });
+// const notion = new Client({ auth: NEXT_PUBLIC_NOTION_ID as string });
 
+/*
 const queryDatabase = async () => {
-  const database = await notion.databases.query({ database_id: NEXT_PUBLIC_DATABASE_ID as string });
+  const database = await notion.databases.query({ database_id: NEXT_PUBLIC_DATABASE_ID as string,  });
 
   return database;
 };
@@ -18,6 +23,37 @@ const retrieveDatabase = async () => {
   const database = await notion.databases.retrieve({ database_id: NEXT_PUBLIC_DATABASE_ID as string });
 
   return database;
+};
+*/
+
+const queryDatabase = async () => {
+  const fetchData = await fetch(`https://api.notion.com/v1/databases/${NEXT_PUBLIC_DATABASE_ID}/query`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${NEXT_PUBLIC_NOTION_ID}`,
+      "Notion-Version": "2022-06-28",
+    },
+    cache: "no-store",
+  });
+  const response: QueryDatabaseResponse = await fetchData.json();
+
+  return response;
+};
+
+const retrieveDatabase = async () => {
+  const notionDatabase = await fetch(`https://api.notion.com/v1/databases/${NEXT_PUBLIC_DATABASE_ID}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${NEXT_PUBLIC_NOTION_ID}`,
+      "Notion-Version": "2022-06-28",
+    },
+    cache: "no-store",
+  });
+  const response: GetDatabaseResponse = await notionDatabase.json();
+
+  return response;
 };
 
 export default async function Home() {
