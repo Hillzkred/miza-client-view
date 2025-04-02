@@ -1,0 +1,61 @@
+import * as React from "react";
+import { DatabasePropertyConfigResponse } from "@/app/types/types";
+import App from "./App";
+import { Client } from "@notionhq/client";
+import { PartialDatabaseObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+
+const { NEXT_PUBLIC_NOTION_ID, NEXT_PUBLIC_DATABASE_ID } = process.env;
+
+const notion = new Client({ auth: NEXT_PUBLIC_NOTION_ID as string });
+
+const queryDatabase = async () => {
+  const database = await notion.databases.query({ database_id: NEXT_PUBLIC_DATABASE_ID as string });
+
+  return database;
+};
+
+const retrieveDatabase = async () => {
+  const database = await notion.databases.retrieve({ database_id: NEXT_PUBLIC_DATABASE_ID as string });
+
+  return database;
+};
+
+export default async function Home() {
+  const allDatabaseResult = await Promise.all([queryDatabase(), retrieveDatabase()]);
+  const listOfHeadings: string[] = [];
+  const listOfValues: Array<DatabasePropertyConfigResponse[]> = [];
+
+  allDatabaseResult.map((item) => {
+    if (item.object === "database") {
+      const headings = Object.keys(item.properties);
+      headings.map((item) => {
+        listOfHeadings.push(item);
+      });
+    } else if (item.object === "list") {
+      const results = item.results as PartialDatabaseObjectResponse[];
+      results.map((item) => {
+        const values = Object.values(item.properties);
+
+        listOfValues.push(values);
+      });
+    }
+  });
+
+  const values: DatabasePropertyConfigResponse[] = [];
+
+  for (let i = 0; i < 4; i++) {
+    const item = listOfValues[i];
+    values.push(item[i]);
+
+    // terminate when item is undefined
+    if (item[i] === undefined) {
+      break;
+    }
+  }
+
+  return (
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <App listOfHeadings={listOfHeadings} values={values} />
+    </div>
+  );
+}
