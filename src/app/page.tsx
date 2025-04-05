@@ -1,7 +1,6 @@
 import * as React from "react";
 import { DatabasePropertyConfigResponse } from "@/app/types/types";
 import App from "./App";
-// import { Client } from "@notionhq/client";
 import {
   GetDatabaseResponse,
   PartialDatabaseObjectResponse,
@@ -9,22 +8,6 @@ import {
 } from "@notionhq/client/build/src/api-endpoints";
 
 const { NEXT_PUBLIC_NOTION_ID, NEXT_PUBLIC_DATABASE_ID } = process.env;
-
-// const notion = new Client({ auth: NEXT_PUBLIC_NOTION_ID as string });
-
-/*
-const queryDatabase = async () => {
-  const database = await notion.databases.query({ database_id: NEXT_PUBLIC_DATABASE_ID as string,  });
-
-  return database;
-};
-
-const retrieveDatabase = async () => {
-  const database = await notion.databases.retrieve({ database_id: NEXT_PUBLIC_DATABASE_ID as string });
-
-  return database;
-};
-*/
 
 const queryDatabase = async () => {
   const fetchData = await fetch(`https://api.notion.com/v1/databases/${NEXT_PUBLIC_DATABASE_ID}/query`, {
@@ -56,7 +39,14 @@ const retrieveDatabase = async () => {
   return response;
 };
 
+async function getFoo() {
+  const req = await fetch("http://localhost:3000/api/data", { method: "GET" });
+  const res = await req.json();
+  console.log(res);
+}
+
 export default async function Home() {
+  await getFoo();
   const allDatabaseResult = await Promise.all([queryDatabase(), retrieveDatabase()]);
   const listOfHeadings: string[] = [];
   const listOfValues: Array<DatabasePropertyConfigResponse[]> = [];
