@@ -40,7 +40,7 @@ const retrieveDatabase = async () => {
 };
 
 async function getFoo() {
-  const req = await fetch("http://localhost:3000/api/notion-webhook", { method: "GET" });
+  const req = await fetch("/api/notion-webhook", { method: "GET" });
   const res = await req.json();
   console.log(res);
 }
