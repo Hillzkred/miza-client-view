@@ -7,14 +7,14 @@ import {
   QueryDatabaseResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 
-const { NEXT_PUBLIC_NOTION_ID, NEXT_PUBLIC_DATABASE_ID } = process.env;
+const { NOTION_ID, DATABASE_ID, API_BASE_URL } = process.env;
 
 const queryDatabase = async () => {
-  const fetchData = await fetch(`https://api.notion.com/v1/databases/${NEXT_PUBLIC_DATABASE_ID}/query`, {
+  const fetchData = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `${NEXT_PUBLIC_NOTION_ID}`,
+      Authorization: `${NOTION_ID}`,
       "Notion-Version": "2022-06-28",
     },
     cache: "no-store",
@@ -25,11 +25,11 @@ const queryDatabase = async () => {
 };
 
 const retrieveDatabase = async () => {
-  const notionDatabase = await fetch(`https://api.notion.com/v1/databases/${NEXT_PUBLIC_DATABASE_ID}`, {
+  const notionDatabase = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `${NEXT_PUBLIC_NOTION_ID}`,
+      Authorization: `${NOTION_ID}`,
       "Notion-Version": "2022-06-28",
     },
     cache: "no-store",
@@ -40,7 +40,7 @@ const retrieveDatabase = async () => {
 };
 
 async function getFoo() {
-  const req = await fetch("/api/notion-webhook", { method: "GET" });
+  const req = await fetch(`${API_BASE_URL}/api/notion-webhook`, { method: "GET" });
   const res = await req.json();
   console.log(res);
 }
