@@ -7,7 +7,7 @@ import {
   QueryDatabaseResponse,
 } from "@notionhq/client/build/src/api-endpoints";
 
-const { NOTION_ID, DATABASE_ID, API_BASE_URL } = process.env;
+const { NOTION_ID, DATABASE_ID } = process.env;
 
 const queryDatabase = async () => {
   const fetchData = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
@@ -39,14 +39,7 @@ const retrieveDatabase = async () => {
   return response;
 };
 
-async function getFoo() {
-  const req = await fetch(`${API_BASE_URL}/api/notion-webhook`, { method: "GET" });
-  const res = await req.json();
-  console.log(res);
-}
-
 export default async function Home() {
-  await getFoo();
   const allDatabaseResult = await Promise.all([queryDatabase(), retrieveDatabase()]);
   const listOfHeadings: string[] = [];
   const listOfValues: Array<DatabasePropertyConfigResponse[]> = [];
